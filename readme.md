@@ -1,6 +1,6 @@
 # Tweet Sentiment Analysis
 
-![Squidgame_wordcloud](./utils/wordcloud_with_mask.png)
+![Squidgame_wordcloud](./images/wordcloud_with_mask.png)
 
 
 ## Description
