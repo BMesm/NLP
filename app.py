@@ -1,67 +1,45 @@
-from PIL import Image
-from utils.tweet_scraping import *
 import streamlit as st
-import pandas as pd
+from utils.tweet_scraping import *
+from utils.tweet_analysis import *
+from utils.figures import *
 
-st.set_page_config(layout="wide")
+# Configuration of Streamlit page
+st.set_page_config(
+    page_title="Feeling of Twitter on ...",
+    layout='centered',
+    initial_sidebar_state="collapsed")
 
-header = st.container()
-plots = st.container()
-scrape_section = st.container()
+#TODO: Sidebar information
 
-# Handles the sidebar option
-st.sidebar.title("Sentiment analysis")
-brooklyn_99_button = st.sidebar.selectbox("What show would you like to analyze?",
-                                          options=["Brooklyn 99","Analyze your own favorite show"])
+# Title
+st.markdown(f"<h1 style='text-align: center;'>Feeling of Twitter on ...</h1>", unsafe_allow_html=True)
 
-# Handles the first option from the sidebar.
-# Loads a csv, prescraped from Twitter.
-# Shows a piechart with useful info on sentiment analysis.
-if brooklyn_99_button == "Brooklyn 99":
-    with header:
-        st.title(" My favourite show ")
-        image = Image.open('visuals/Brooklyn-Nine-Nine.jpg')
-        st.image(image)
-        st.write('---')
+# Getting user's hashtags
+hashtags_to_scrape = ''
+hashtag = st.text_input('Wich # would you like to analyse ?', value="SquidGame")
+if hashtag:
+    hashtag_clean = clean_input(hashtag)
+    if len(hashtag_clean) != 0:
+        hashtags_to_scrape += hashtag_clean
 
-    with plots:
-        df = pd.read_csv("files/brooklyn99.csv")
-        with st.spinner(f"""
-        Processing {len(df)} tweets
-        """):
-            st.success(f"Processed {len(df)} tweets")
+if len(hashtags_to_scrape) == 0:
+    hashtags_to_scrape = 'empty'
 
-        fig = show_sentiment_distribution(df["sentiment"], plot_title="Brooklyn99 sentiment analysis")
-        st.plotly_chart(fig, use_container_width=True)
+st.write(f'Current hashtags: __{hashtags_to_scrape}__')
 
-# Handles the second option from the sidebar.
-# Scrapes a searchterm given by the user.
-# Shows a piechart with useful info on sentiment analysis.
+number_tweets = st.slider('How many tweets do you want to analyze? (The more, the longer the processing time)', 0, 1000, 100)
 
-elif brooklyn_99_button == "Analyze your own favorite show":
-    with header:
-        image = Image.open('visuals/your_turn.jpg')
-        st.image(image)
-        st.write('---')
 
-    with plots:
-        inputted_text = st.text_input("Enter the hashtag you want to search for on Twitter:", value="#")
-        if inputted_text not in ["","#"]:
-            with st.spinner(f"Searching Twitter for {inputted_text}"):
-                df = get_tweet([inputted_text])
-                st.success(f"Found {len(df)} relevant tweets")
-
-            # Safety if no tweets were found.
-            if len(df) == 0:
-                st.write("Please try a different search message.")
-
-            else:
-                with st.spinner(f"""
-                Processing all tweets
-                """):
-                    df["sentiment"], df["cleaned_tweet"] = \
-                        return_sentiments(df["text"])
-                    st.success(f"Processed {len(df)} tweets")
-
-                fig = show_sentiment_distribution(df["sentiment"], plot_title=f"{inputted_text} sentiment analysis")
-                st.plotly_chart(fig, use_container_width=True)
+# Selecting a language
+selected_language = st.selectbox('Which language are you interested in?',
+                                 ('English', 'French', 'German', 'Dutch', 'Spanish'))
+if selected_language == 'English':
+    language = 'en'
+elif selected_language == 'French':
+    language = 'fr'
+elif selected_language == 'German':
+    language = 'de'
+elif selected_language == 'Dutch':
+    language = 'nl'
+elif selected_language == 'Spanish':
+    language = 'es'
