@@ -8,7 +8,7 @@
 The mission, if you agree, it's to create a model to identify the sentiments on tweet. And use this model to now the average sentiment on a certain serie.
 
 ## Mission objectives
-
+   
 - Be able interact with Twitter's API.
 - Be able create a sentiment analysis model.
 
