@@ -1,7 +1,16 @@
 import twint
 import datetime
+import string
 import nest_asyncio
 nest_asyncio.apply()
+
+def clean_input(hashtag):
+    clean_user_text = ''
+    for char in hashtag:
+        if char not in string.punctuation and char.isalpha():
+            clean_user_text += char
+    clean_user_text_no_space = clean_user_text.replace(' ', '')
+    return clean_user_text_no_space
 
 def get_tweet(tag:str,limit:int,language="en"):
     since = datetime.datetime(2020, 1, 1)
@@ -12,7 +21,6 @@ def get_tweet(tag:str,limit:int,language="en"):
     config.Lang = language
     config.Limit = limit
     config.Since = str(since)
-    config.Output = "SquidGames.csv"
 
     days = [7,14,21,28]
 
@@ -21,5 +29,4 @@ def get_tweet(tag:str,limit:int,language="en"):
             until = datetime.datetime(2021, month, day)
             config.Until = str(until)
             twint.run.Search(config)
-
-    return 
+    return  twint.storage.panda.Tweets_df
