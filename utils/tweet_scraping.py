@@ -21,12 +21,15 @@ def get_tweet(tag:str,limit:int,language="en"):
     config.Lang = language
     config.Limit = limit
     config.Since = str(since)
-
-    days = [7,14,21,28]
+    config.Pandas = True
+    
+    #TODO : more date for more data
+    """ days = [7,14,21,28]
 
     for month in range(9,11):
         for day in days:
             until = datetime.datetime(2021, month, day)
-            config.Until = str(until)
-            twint.run.Search(config)
+            config.Until = str(until) """
+    
+    twint.run.Search(config)
     return  twint.storage.panda.Tweets_df
